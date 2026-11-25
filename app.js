@@ -37,12 +37,24 @@ var CONFIG = {
   function ls(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
 
   // Bina pichhla page poora kiye aage aaye to wapas bhejo
-  var reached = Number(ss("chain_step") || 0);
+  // ---------- Page lock ----------
+  // Page 2/3/Final sirf tab khulta hai jab theek pichhle page ka timer
+  // abhi poora hua ho. URL badal kar aage-peeche jaane par Page 1 par wapas.
+  var PASS_KEY = "bl_pass", PASS_TTL = 15 * 60 * 1000;   // 15 minute tak valid
+  function getPass() { try { return JSON.parse(ss(PASS_KEY)) || {}; } catch (e) { return {}; } }
+  function setPass(n) { ss(PASS_KEY, JSON.stringify({ s: n, t: Date.now() })); }
   ss("chain_test", "1");
   var redirecting = false;
-  if (step && ss("chain_test") === "1" && step > 1 && reached < step - 1) {
-    redirecting = true;
-    location.replace(PAGES[Math.max(reached, 0)]);
+  if (step > 1 && ss("chain_test") === "1") {
+    var pass = getPass();
+    var ok = (pass.s === step - 1 || pass.s === step * 10) && Date.now() - (pass.t || 0) < PASS_TTL;
+    if (!ok) {
+      redirecting = true;
+      ss(PASS_KEY, "");
+      location.replace(PAGES[0]);
+    } else if (pass.s === step - 1) {
+      ss(PASS_KEY, JSON.stringify({ s: step * 10, t: pass.t }));   // "is page par hai, timer chal raha" (refresh chalega)
+    }
   }
 
   // ---------- Firebase ----------
@@ -175,7 +187,7 @@ var CONFIG = {
       left--; paint();
       if (left <= 0) {
         clearInterval(t);
-        ss("chain_step", String(Math.max(reached, step)));
+        if (isFinal) ss(PASS_KEY, ""); else setPass(step);   // ab sirf agla page khulega
         msg.textContent = isFinal ? "Aapka link ready hai, neeche button dabayein." : "Ho gaya! Neeche button dabayein.";
         var href = isFinal ? safeUrl(CONFIG.MAIN_LINK) : PAGES[step];
         goBtns.forEach(function (b) { b.href = href; b.hidden = false; });
