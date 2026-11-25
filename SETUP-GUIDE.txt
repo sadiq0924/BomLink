@@ -90,8 +90,8 @@ Badlav site par 2 minute me dikhte hain.
 ZAROORI BAATEIN
 ---------------
 * admin.html ka link kisi ko mat do. Password strong rakho.
-* Free plan me roz lagbhag 20,000 visits tak aaram se chalega.
-  (Firebase free limit: 20k writes + 50k reads per day.)
+* Free plan me roz lagbhag 10,000 page visits tak aaram se chalega.
+  (Har visit par 2 writes hote hain; Firebase free limit: 20k writes + 50k reads per day.)
   Isse zyada traffic ho to Firebase "Blaze" plan lena padega.
 * Firebase set na ho to bhi site chalti rahegi (default content ke saath),
   bas visits count nahi honge aur admin panel nahi khulega.
