@@ -5,7 +5,10 @@
 
 FILES KA MATLAB
 ---------------
-index.html, step2.html, step3.html, go.html  -> website ke 4 pages
+index.html            -> blog homepage
+start.html, step2.html, step3.html, go.html  -> timer wale 4 pages
+                        (SHARE karne ka link: aapki-site/start.html)
+about, contact, privacy-policy, disclaimer, terms -> zaroori pages
 admin.html            -> ADMIN PANEL (yahan se sab edit + visits)
 firebase-config.js    -> yahan Firebase ki settings paste karni hain
 firestore.rules       -> security rules (Firebase me paste karne hain)

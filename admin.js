@@ -47,10 +47,11 @@
     b.addEventListener("click", function () {
       var t = b.dataset.tab;
       document.querySelectorAll("[data-tab]").forEach(function (x) { x.setAttribute("aria-selected", x === b); });
-      ["dash", "posts", "settings"].forEach(function (s) { $(s).classList.toggle("hide", s !== t); });
+      ["dash", "posts", "settings", "msgs"].forEach(function (s) { $(s).classList.toggle("hide", s !== t); });
       if (t === "dash") loadDash();
       if (t === "posts" && !postLoaded) loadPost(curPage);
       if (t === "settings") loadSettings();
+      if (t === "msgs") loadMsgs();
     });
   });
 
@@ -223,5 +224,27 @@
     $("saveSet").disabled = true;
     db.collection("site").doc("settings").set(s).then(function () { toast("Settings save ho gayi ✓"); })
       .catch(function (e) { toast(permErr(e)); }).then(function () { $("saveSet").disabled = false; });
+  });
+
+  // ---------- MESSAGES ----------
+  function loadMsgs() {
+    $("msgList").innerHTML = '<p class="note">Load ho rahe hain...</p>';
+    db.collection("messages").orderBy("t", "desc").limit(50).get().then(function (snap) {
+      var rows = [];
+      snap.forEach(function (d) { rows.push({ id: d.id, v: d.data() }); });
+      if (!rows.length) { $("msgList").innerHTML = '<p class="note">Abhi koi message nahi aaya.</p>'; return; }
+      $("msgList").innerHTML = rows.map(function (r) {
+        var v = r.v, t = v.t && v.t.toDate ? v.t.toDate() : (v.t ? new Date(v.t) : null);
+        return '<div class="msg"><div class="mh"><b>' + esc(v.name || "") + '</b><span class="note">' + esc(v.email || "") +
+          (t ? " · " + esc(t.toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })) : "") +
+          '</span><button class="del" type="button" data-del="' + esc(r.id) + '">Delete</button></div><p>' + esc(v.msg || "") + "</p></div>";
+      }).join("");
+    }).catch(function (e) { $("msgList").innerHTML = '<p class="note">' + esc(permErr(e)) + "</p>"; });
+  }
+  $("msgRefresh").addEventListener("click", loadMsgs);
+  $("msgList").addEventListener("click", function (e) {
+    var id = e.target && e.target.getAttribute("data-del");
+    if (!id || !window.confirm("Ye message delete karna hai?")) return;
+    db.collection("messages").doc(id).delete().then(function () { toast("Delete ho gaya"); loadMsgs(); }).catch(function (er) { toast(permErr(er)); });
   });
 }

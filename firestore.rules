@@ -17,6 +17,16 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // Contact form: koi bhi message bhej sakta hai, padh/delete sirf admin
+    match /messages/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['name','email','msg','t'])
+        && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 80
+        && request.resource.data.email is string && request.resource.data.email.size() <= 120
+        && request.resource.data.msg is string && request.resource.data.msg.size() >= 5 && request.resource.data.msg.size() <= 2000
+        && request.resource.data.t == request.time;
+      allow read, delete: if isAdmin();
+    }
+
     // Visit counter: visitor sirf +1 kar sakta hai, padh sirf admin sakta hai
     match /stats/{day} {
       function okKeys() {

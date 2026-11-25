@@ -23,8 +23,8 @@ var CONFIG = {
 /* ============================================================ */
 
 {
-  var PAGES = ["index.html", "step2.html", "step3.html", "go.html"];
-  var step = Number(document.body.dataset.step || 1);
+  var PAGES = ["start.html", "step2.html", "step3.html", "go.html"];
+  var step = Number(document.body.dataset.step || 0);    // 0 = normal page (timer nahi)
   var isFinal = step === 4;
   var now = new Date();
   var today = now.toLocaleDateString("en-CA");          // YYYY-MM-DD (visitor ka local din)
@@ -39,7 +39,9 @@ var CONFIG = {
   // Bina pichhla page poora kiye aage aaye to wapas bhejo
   var reached = Number(ss("chain_step") || 0);
   ss("chain_test", "1");
-  if (ss("chain_test") === "1" && step > 1 && reached < step - 1) {
+  var redirecting = false;
+  if (step && ss("chain_test") === "1" && step > 1 && reached < step - 1) {
+    redirecting = true;
     location.replace(PAGES[Math.max(reached, 0)]);
   }
 
@@ -61,9 +63,11 @@ var CONFIG = {
     var done = false;
     function finish(s, p) { if (!done) { done = true; cb(s, p); } }
     setTimeout(function () { finish(c && c.s, c && c.p); }, 2500);
-    Promise.all([db.collection("site").doc("settings").get(), db.collection("posts").doc(String(step)).get()])
+    var reqs = [db.collection("site").doc("settings").get()];
+    if (step) reqs.push(db.collection("posts").doc(String(step)).get());
+    Promise.all(reqs)
       .then(function (r) {
-        var s = r[0].exists ? r[0].data() : null, p = r[1].exists ? r[1].data() : null;
+        var s = r[0].exists ? r[0].data() : null, p = r[1] && r[1].exists ? r[1].data() : null;
         ls(key, JSON.stringify({ t: Date.now(), s: s, p: p }));
         finish(s, p);
       })
@@ -106,7 +110,7 @@ var CONFIG = {
 
   var article = document.getElementById("post");
   if (db && article) article.style.visibility = "hidden";
-  loadRemote(function (s, p) {
+  if (!redirecting) loadRemote(function (s, p) {
     try { if (s) applySettings(s); if (p) applyPost(p); } catch (e) {}
     if (article) article.style.visibility = "";
     start();
@@ -124,13 +128,32 @@ var CONFIG = {
       var a = el.querySelector("a"); a.textContent = CONFIG.PROMO_BUTTON; a.href = safeUrl(CONFIG.PROMO_LINK);
     });
 
-    // aaj ka tip + date
-    var dayNum = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 864e5) + now.getFullYear() * 400;
-    var tipBox = document.getElementById("tip");
-    if (tipBox) { if (TIPS.length) tipBox.textContent = TIPS[dayNum % TIPS.length]; else tipBox.parentNode.hidden = true; }
+    // date
     var dateTxt = now.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" });
     document.querySelectorAll("[data-today]").forEach(function (el) { el.textContent = dateTxt; });
     var y = document.getElementById("year"); if (y) y.textContent = now.getFullYear();
+    document.querySelectorAll(".tglink").forEach(function (a) { a.href = safeUrl(CONFIG.PROMO_LINK); });
+
+    // share
+    var here = encodeURIComponent(location.href.split("#")[0]);
+    var wa = document.querySelector(".share .wa"), tg = document.querySelector(".share .tg");
+    if (wa) wa.href = "https://wa.me/?text=" + encodeURIComponent(document.title + " ") + here;
+    if (tg) tg.href = "https://t.me/share/url?url=" + here;
+
+    // cookie notice
+    var ck = document.getElementById("cookie");
+    if (ck && ls("bl_cookie_ok") !== "1") {
+      ck.hidden = false;
+      document.getElementById("cookieOk").addEventListener("click", function () { ls("bl_cookie_ok", "1"); ck.hidden = true; });
+    }
+
+    contactForm();
+    if (!step) return;                          // neeche ka sab sirf timer wale pages ke liye
+
+    // aaj ka tip
+    var dayNum = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 864e5) + now.getFullYear() * 400;
+    var tipBox = document.getElementById("tip");
+    if (tipBox) { if (TIPS.length) tipBox.textContent = TIPS[dayNum % TIPS.length]; else tipBox.parentNode.hidden = true; }
 
     // visit gino (din me pehli baar = unique)
     var f = ["p" + step];
@@ -159,13 +182,29 @@ var CONFIG = {
       }
     }, 1000);
 
-    // share
-    var here = encodeURIComponent(location.href.split("#")[0]);
-    var wa = document.querySelector(".share .wa"), tg = document.querySelector(".share .tg");
-    if (wa) wa.href = "https://wa.me/?text=" + encodeURIComponent(document.title + " ") + here;
-    if (tg) tg.href = "https://t.me/share/url?url=" + here;
-
     loadNews();
+  }
+
+  // ---------- Contact form ----------
+  function contactForm() {
+    var f = document.getElementById("cform");
+    if (!f) return;
+    var st = document.getElementById("c-status"), btn = document.getElementById("c-send");
+    f.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var name = document.getElementById("c-name").value.trim();
+      var email = document.getElementById("c-email").value.trim();
+      var msg = document.getElementById("c-msg").value.trim();
+      if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || msg.length < 5) {
+        st.textContent = "Kripya naam, sahi email aur kam se kam 5 akshar ka message likhein."; return;
+      }
+      if (!db) { st.textContent = "Abhi message nahi bhej paaye. Kripya Telegram par sampark karein."; return; }
+      btn.disabled = true; st.textContent = "Bhej rahe hain...";
+      db.collection("messages").add({ name: name.slice(0, 80), email: email.slice(0, 120), msg: msg.slice(0, 2000), t: firebase.firestore.FieldValue.serverTimestamp() })
+        .then(function () { f.reset(); st.textContent = "Shukriya! Aapka message mil gaya hai."; })
+        .catch(function () { st.textContent = "Message nahi gaya. Thodi der baad dobara try karein."; })
+        .then(function () { btn.disabled = false; });
+    });
   }
 
   // ---------- LIVE NEWS ----------
