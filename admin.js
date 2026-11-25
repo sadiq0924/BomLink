@@ -30,15 +30,13 @@
   }
 
   // ---------- login ----------
-  // Username "SADIQ" andar se is email me badal jaata hai (Firebase ko email chahiye).
-  var ADMIN_DOMAIN = "bomlink.app";
-  function toEmail(u) { u = u.trim().toLowerCase(); return u.indexOf("@") >= 0 ? u : u + "@" + ADMIN_DOMAIN; }
+  function toEmail(u) { return u.trim().toLowerCase(); }
   $("login").addEventListener("submit", function (e) {
     e.preventDefault();
     $("lerr").textContent = ""; $("lbtn").disabled = true;
     auth.signInWithEmailAndPassword(toEmail($("em").value), $("pw").value).catch(function (err) {
       var c = err && err.code || "";
-      $("lerr").textContent = /invalid|wrong|not-found|credential/.test(c) ? "Username ya password galat hai." :
+      $("lerr").textContent = /invalid|wrong|not-found|credential/.test(c) ? "Email ya password galat hai." :
         /too-many/.test(c) ? "Bahut baar galat try hua. Thodi der baad try karo." : "Login nahi ho paya: " + c;
     }).then(function () { $("lbtn").disabled = false; });
   });

@@ -46,7 +46,8 @@ STEP 3: Database (Firestore) chalu karo
 4. Upar "Rules" tab kholo.
 5. Wahan ka sab text hata kar firestore.rules file ka POORA
    text paste karo.
-6. "Publish" dabao. (Rules me admin pehle se set hai: SADIQ)
+6. Rules me "ADMIN_EMAIL_YAHAN" ki jagah apna admin Gmail likho.
+7. "Publish" dabao.
 
 
 STEP 4: Admin login banao
@@ -54,10 +55,8 @@ STEP 4: Admin login banao
 1. Left menu: Build -> Authentication -> "Get started".
 2. "Email/Password" chuno -> Enable -> Save.
 3. Upar "Users" tab -> "Add user".
-4. Email me ye EXACT likho:   sadiq@bomlink.app
-   Password: kam se kam 6 akshar (Firebase isse chhota nahi leta),
-   jaise  Sadiq@0921  ->  Add user.
-   (Admin panel me login: Username = SADIQ, Password = jo yahan rakha)
+4. Apna Gmail aur password (kam se kam 6 akshar) daalo -> Add user.
+   (Gmail wahi jo rules me likha hai.)
 
 
 STEP 5: Apni website ka address allow karo
@@ -76,7 +75,7 @@ Netlify par: app.netlify.com/drop par poora folder drag-drop kar do.
 STEP 7: Admin panel kholo
 -------------------------
   https://APNI-SITE.com/admin.html
-Username: SADIQ   Password: jo Step 4 me rakha.
+Apne Gmail aur Step 4 wale password se login karo.
 
 - Dashboard : aaj ke visits, unique log, link clicks, 14 din ka chart,
               kitne log Page 1 se Final link tak pahunche.

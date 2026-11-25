@@ -1,10 +1,10 @@
 rules_version = '2';
-// Admin username SADIQ = andar se sadiq@bomlink.app (isko mat badlo)
+// "ADMIN_EMAIL_YAHAN" ki jagah apna admin Gmail likho (sirf Firebase me, GitHub me nahi)
 service cloud.firestore {
   match /databases/{database}/documents {
 
     function isAdmin() {
-      return request.auth != null && request.auth.token.email == "sadiq@bomlink.app";
+      return request.auth != null && request.auth.token.email == "ADMIN_EMAIL_YAHAN";
     }
 
     // Settings aur posts: sab padh sakte hain, sirf admin badal sakta hai
