@@ -1,0 +1,99 @@
+=============================================================
+  BOMLINK - ADMIN PANEL SETUP GUIDE (sirf ek baar karna hai)
+  Lagbhag 10-15 minute lagenge. Sab kuch FREE hai.
+=============================================================
+
+FILES KA MATLAB
+---------------
+index.html, step2.html, step3.html, go.html  -> website ke 4 pages
+admin.html            -> ADMIN PANEL (yahan se sab edit + visits)
+firebase-config.js    -> yahan Firebase ki settings paste karni hain
+firestore.rules       -> security rules (Firebase me paste karne hain)
+app.js / md.js / defaults.js / style.css / img/  -> mat chhedo
+
+
+STEP 1: Firebase project banao
+------------------------------
+1. Browser me kholo: https://console.firebase.google.com
+2. Apne Gmail se login karo.
+3. "Create a project" (ya "Add project") dabao.
+4. Naam do, jaise: bomlink  ->  Continue.
+5. Google Analytics wala option OFF kar do  ->  Create project.
+
+
+STEP 2: Web app jodo aur config copy karo
+-----------------------------------------
+1. Project khulne par  </>  (Web) wala icon dabao.
+2. App nickname: bomlink-web  ->  "Register app".
+3. Ek code dikhega jisme "const firebaseConfig = { ... }" hoga.
+4. Usme se apiKey, authDomain, projectId, storageBucket,
+   messagingSenderId, appId ki values copy karo.
+5. firebase-config.js file kholo (Notepad / koi bhi editor)
+   aur "PASTE_..." ki jagah apni values daal do. Save karo.
+
+   Example:
+     apiKey: "AIzaSyB....",
+     authDomain: "bomlink-12345.firebaseapp.com",
+     projectId: "bomlink-12345",
+     ...
+
+
+STEP 3: Database (Firestore) chalu karo
+---------------------------------------
+1. Left menu: Build -> Firestore Database -> "Create database".
+2. Location: asia-south1 (Mumbai) chuno -> Next.
+3. "Start in production mode" -> Create.
+4. Upar "Rules" tab kholo.
+5. Wahan ka sab text hata kar firestore.rules file ka POORA
+   text paste karo.
+6. "Publish" dabao. (Rules me admin pehle se set hai: SADIQ)
+
+
+STEP 4: Admin login banao
+-------------------------
+1. Left menu: Build -> Authentication -> "Get started".
+2. "Email/Password" chuno -> Enable -> Save.
+3. Upar "Users" tab -> "Add user".
+4. Email me ye EXACT likho:   sadiq@bomlink.app
+   Password: kam se kam 6 akshar (Firebase isse chhota nahi leta),
+   jaise  Sadiq@0921  ->  Add user.
+   (Admin panel me login: Username = SADIQ, Password = jo yahan rakha)
+
+
+STEP 5: Apni website ka address allow karo
+------------------------------------------
+1. Authentication -> Settings -> "Authorized domains".
+2. "Add domain" -> apni site ka address daalo
+   (jaise: bomlink.netlify.app  ya  apna domain.com).
+
+
+STEP 6: Website upload karo
+---------------------------
+Saari files (img folder ke saath) Netlify / apni hosting par upload karo.
+Netlify par: app.netlify.com/drop par poora folder drag-drop kar do.
+
+
+STEP 7: Admin panel kholo
+-------------------------
+  https://APNI-SITE.com/admin.html
+Username: SADIQ   Password: jo Step 4 me rakha.
+
+- Dashboard : aaj ke visits, unique log, link clicks, 14 din ka chart,
+              kitne log Page 1 se Final link tak pahunche.
+- Posts     : har page ka title, category, image, content, aaj ke tips edit.
+              Pehli baar "Default content" dikhega, ek baar Save dabao.
+- Settings  : main link, timer, site naam, promo box, news ki settings.
+
+Badlav site par 2 minute me dikhte hain.
+
+
+ZAROORI BAATEIN
+---------------
+* admin.html ka link kisi ko mat do. Password strong rakho.
+* Free plan me roz lagbhag 20,000 visits tak aaram se chalega.
+  (Firebase free limit: 20k writes + 50k reads per day.)
+  Isse zyada traffic ho to Firebase "Blaze" plan lena padega.
+* Firebase set na ho to bhi site chalti rahegi (default content ke saath),
+  bas visits count nahi honge aur admin panel nahi khulega.
+* Visits ka count browser ke hisaab se hai. Ad-blocker wale kuch log
+  shayad count na hon, isliye number thoda kam aa sakta hai.

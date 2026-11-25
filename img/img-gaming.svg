@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0f3f94"/><stop offset="1" stop-color="#1a5fd0"/></linearGradient>
+<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8ec5ff"/><stop offset="1" stop-color="#e3f1ff"/></linearGradient></defs>
+<rect width="1200" height="630" fill="url(#bg)"/>
+<g fill="#fff" opacity=".08"><circle cx="120" cy="90" r="70"/><circle cx="1100" cy="540" r="120"/><circle cx="1040" cy="80" r="40"/></g>
+<rect x="190" y="150" width="820" height="400" rx="56" fill="#0a1a33"/>
+<rect x="250" y="178" width="700" height="344" rx="14" fill="url(#sky)"/>
+<clipPath id="sc"><rect x="250" y="178" width="700" height="344" rx="14"/></clipPath>
+<g clip-path="url(#sc)">
+<path d="M250 420 Q380 330 500 400 T760 380 T950 360 V522 H250Z" fill="#7fb36a"/>
+<path d="M250 460 Q420 410 600 450 T950 430 V522 H250Z" fill="#5d9a4d"/>
+<rect x="640" y="300" width="70" height="110" fill="#c98a4b"/><path d="M630 300 L675 262 L720 300Z" fill="#a0612d"/>
+<rect x="420" y="330" width="26" height="80" fill="#6b4a2b"/><circle cx="433" cy="318" r="40" fill="#3f7f3a"/>
+<g transform="translate(560 335)"><circle r="20" cy="-58" fill="#2a2a2a"/><rect x="-22" y="-38" width="44" height="62" rx="10" fill="#334155"/><rect x="-18" y="24" width="14" height="40" fill="#1f2937"/><rect x="4" y="24" width="14" height="40" fill="#1f2937"/></g>
+<g stroke="#ff2d2d" stroke-width="5" fill="none"><circle cx="560" cy="277" r="34"/><path d="M560 230v26M560 298v26M513 277h26M581 277h26"/></g>
+<circle cx="560" cy="277" r="5" fill="#ff2d2d"/>
+<circle cx="335" cy="440" r="48" fill="#fff" opacity=".35"/><circle cx="335" cy="440" r="20" fill="#fff" opacity=".7"/>
+<circle cx="870" cy="440" r="44" fill="#fff" opacity=".55"/><circle cx="870" cy="440" r="26" fill="#1a5fd0" opacity=".8"/>
+<circle cx="800" cy="380" r="24" fill="#fff" opacity=".45"/>
+<rect x="270" y="196" width="150" height="14" rx="7" fill="#fff" opacity=".7"/><rect x="270" y="196" width="110" height="14" rx="7" fill="#22c55e"/>
+</g>
+<circle cx="975" cy="350" r="9" fill="#24324a"/>
+<text x="600" y="610" font-family="Poppins,Arial,sans-serif" font-size="40" font-weight="700" fill="#fff" text-anchor="middle">HEADSHOT TIPS</text>
+</svg>

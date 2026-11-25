@@ -1,0 +1,38 @@
+rules_version = '2';
+// Admin username SADIQ = andar se sadiq@bomlink.app (isko mat badlo)
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email == "sadiq@bomlink.app";
+    }
+
+    // Settings aur posts: sab padh sakte hain, sirf admin badal sakta hai
+    match /site/{doc} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /posts/{doc} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Visit counter: visitor sirf +1 kar sakta hai, padh sirf admin sakta hai
+    match /stats/{day} {
+      function okKeys() {
+        return request.resource.data.keys().hasOnly(['p1','p2','p3','p4','u1','u2','u3','u4','clicks']);
+      }
+      function plusOne(k) {
+        return request.resource.data.get(k, 0) == resource.data.get(k, 0)
+            || request.resource.data.get(k, 0) == resource.data.get(k, 0) + 1;
+      }
+      allow read: if isAdmin();
+      allow create: if okKeys() && request.resource.data.values().hasOnly([1]);
+      allow update: if okKeys()
+        && plusOne('p1') && plusOne('p2') && plusOne('p3') && plusOne('p4')
+        && plusOne('u1') && plusOne('u2') && plusOne('u3') && plusOne('u4')
+        && plusOne('clicks');
+      allow delete: if isAdmin();
+    }
+  }
+}
